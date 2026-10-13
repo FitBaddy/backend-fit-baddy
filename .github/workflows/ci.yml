@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    name: Backend (pytest на PostgreSQL)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: fitquest
+          POSTGRES_PASSWORD: fitquest
+          POSTGRES_DB: fitquest_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fitquest -d fitquest_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg2://fitquest:fitquest@localhost:5432/fitquest_test
+      SECRET_KEY: ci-only-secret
+      MOCK_WEBHOOK_SECRET: ci-webhook-secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Установить зависимости
+        run: pip install -r requirements.txt ruff==0.7.4
+      - name: Ruff (не блокирует)
+        continue-on-error: true
+        run: ruff check --select E,F,W --ignore E501 app tests
+      - name: Тесты на PostgreSQL
+        run: pytest -q
+      - name: Тесты на SQLite
+        env:
+          DATABASE_URL: "sqlite+pysqlite:///:memory:"
+        run: pytest -q
