@@ -4,7 +4,7 @@ title: "[Android] Подключение узла Pi и индикация ис�
 assignee: Soloveve
 labels: [module:android, type:feature, sprint-5]
 milestone: "Sprint 5"
-status: todo
+status: done
 story_points: 2
 related_us: [US-H1]
 ---
@@ -15,7 +15,7 @@ related_us: [US-H1]
 - Метка «Симулятор» / «Raspberry Pi» по полю `source`.
 
 ## Критерии готовности
-- [ ] `./gradlew testDebugUnitTest` и lint зелёные
+- [x] `./gradlew testDebugUnitTest` и lint зелёные
 
 ## Зависимости
 - [BE-13](BE-13.md) — [Backend] Приём телеметрии от Pi: POST /telemetry/ingest с X-Device-Token
